@@ -8,7 +8,7 @@
 
 ## 🎨 Architecture & Flow
 
-To solve the complex reasoning requirements of the BEAM benchmark, we moved away from a naïve single-query approach and designed a robust, category-aware pipeline.
+To solve the complex reasoning requirements of the BEAM and LongMemEval benchmarks, we moved away from a naïve single-query approach and designed a robust, category-aware pipeline.
 
 ```mermaid
 flowchart TD
@@ -105,6 +105,24 @@ python evaluate_beam_gemini.py --size 100K --start 0 --end 1
 python score_report.py
 ```
 
+### Run LongMemEval
+
+```bash
+# Run on the small split
+python run_longmemeval.py --data LongMemEval/data/longmemeval_s.json
+
+# Run with verbose panels for live debugging
+python run_longmemeval.py --data LongMemEval/data/longmemeval_s.json --verbose
+
+# Note: Evaluating LME requires an OpenAI API key (GPT-4o)
+python LongMemEval/src/evaluation/evaluate_qa.py \
+  gpt-4o \
+  results/longmemeval_results.jsonl \
+  LongMemEval/data/longmemeval_s.json
+```
+
+---
+
 ## 📂 Project Structure
 
 ```text
@@ -118,5 +136,5 @@ src/
 
 run_beam.py              ← BEAM CLI entry point
 evaluate_beam_gemini.py  ← Gemini-powered BEAM rubric evaluator
-score_report.py          ← Unified score dashboard (BEAM)
+score_report.py          ← Quantitative Benchmarking Dashboard
 ```
