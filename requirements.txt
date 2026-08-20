@@ -1,0 +1,4 @@
+hydradb-sdk
+google-genai
+rich
+python-dotenv
