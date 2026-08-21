@@ -112,9 +112,9 @@ cp .env.example .env
 ```
 > `GEMINI_MODEL` defaults to `gemini-3.5-flash-lite`. Update it in your `.env` if desired.
 
-### Run BEAM (100K) & Gemini Evaluator
+### Run Hydra-Graph Memory and evaluate against BEAM rubrics
 
-We built a custom Gemini-powered evaluator, eliminating the need for an OpenAI API key to judge the benchmark.
+We built a custom Gemini-powered evaluator, eliminating the need for an OpenAI API(default in BEAM) key to judge the benchmark.
 
 ```bash
 # 1. Run inference on chat 1
@@ -123,25 +123,10 @@ python run_beam.py --size 100K --start 0 --end 1
 # 2. Evaluate answers using Gemini as the LLM judge
 python evaluate_beam_gemini.py --size 100K --start 0 --end 1
 
-# 3. View the colorful, combined score dashboard
+# 3. View the colorful, score dashboard
 python score_report.py
 ```
 
-### Run LongMemEval
-
-```bash
-# Run on the small split
-python run_longmemeval.py --data LongMemEval/data/longmemeval_s.json
-
-# Run with verbose panels for live debugging
-python run_longmemeval.py --data LongMemEval/data/longmemeval_s.json --verbose
-
-# Note: Evaluating LME requires an OpenAI API key (GPT-4o)
-python LongMemEval/src/evaluation/evaluate_qa.py \
-  gpt-4o \
-  results/longmemeval_results.jsonl \
-  LongMemEval/data/longmemeval_s.json
-```
 
 ---
 
@@ -149,20 +134,15 @@ python LongMemEval/src/evaluation/evaluate_qa.py \
 
 ```text
 src/
-  config.py                     ← API clients (HydraDB, Gemini); GEMINI_MODEL env var
-  memory.py                     ← HydraDB graph memory: setup_tenant(), ingest_sessions(), recall()
-  answerer.py                   ← generate_answer() with 10 per-category system prompts
-  naive_rag.py                  ← Baseline TF-IDF RAG (no graph, no category routing)
-  cli.py                        ← Rich terminal UI components (spinners, panels)
+  config.py              ← API clients (HydraDB, Gemini); GEMINI_MODEL env var
+  memory.py              ← setup_tenant(), ingest_sessions(), recall(), should_abstain()
+  answerer.py            ← generate_answer() with 10 per-category system prompts
+  cli.py                 ← Rich terminal UI components (spinners, panels)
   benchmarks/
-    beam.py                     ← BEAM adapter for HydraGraph Memory
-    beam_naive_rag.py           ← BEAM adapter for Naive RAG Baseline
+    beam.py              ← BEAM adapter (handles category-aware routing)
 
-run_beam.py                     ← HydraGraph BEAM inference CLI
-run_beam_naive_rag.py           ← Naive RAG BEAM inference CLI
-run_beam_compare.py             ← Side-by-side comparison runner (HydraGraph vs Naive)
-evaluate_beam_gemini.py         ← Gemini-powered BEAM rubric evaluator
-score_report.py                 ← Quantitative Benchmarking Dashboard
-HydraDB_Graph_Architecture.md   ← Visual explanation of HydraDB vs flat Vector Search
-demo_script.md                  ← Script & commands for the demo video
+run_beam.py              ← Hydra Graph BEAM CLI entry point
+run_beam_naive_rag.py    ← Naive RAG BEAM CLI entry point
+evaluate_beam_gemini.py  ← Gemini-powered BEAM rubric evaluator
+score_report.py          ← Quantitative Benchmarking Dashboard
 ```
