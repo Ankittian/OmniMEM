@@ -75,11 +75,13 @@ def print_answer_panel(
     answer: str,
     confidence: float,
     abstained: bool,
+    category: str = "",
 ) -> None:
     """Print a styled panel showing a single Q&A result."""
+    tag = category.replace("_", " ").title() if category else "ANSWERED"
     status = "🚫 [red]ABSTAINED[/red]" if abstained else (
-        "⚠️  [yellow]LOW CONFIDENCE[/yellow]" if confidence < 0.5
-        else "✅ [green]ANSWERED[/green]"
+        f"⚠️  [yellow]{tag} (LOW CONFIDENCE)[/yellow]" if confidence < 0.5
+        else f"✅ [green]{tag}[/green]"
     )
     body = (
         f"[bold bright_yellow]Q: {question}[/bold bright_yellow]\n\n"

@@ -86,7 +86,7 @@ def run_single(chat_dir: Path, size: str, verbose: bool = False) -> Path:
                 llm_response = generate_answer(context, question_text)
 
                 if verbose:
-                    print_answer_panel(question_text, context, llm_response, confidence, False)
+                    print_answer_panel(question_text, context, llm_response, confidence, False, category=category)
 
                 entry = dict(q)
                 entry["llm_response"] = llm_response

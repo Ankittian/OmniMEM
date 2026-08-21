@@ -143,6 +143,11 @@ src/
 
 run_beam.py              ← Hydra Graph BEAM CLI entry point
 run_beam_naive_rag.py    ← Naive RAG BEAM CLI entry point
-evaluate_beam_gemini.py  ← Gemini-powered BEAM rubric evaluator
 score_report.py          ← Quantitative Benchmarking Dashboard
+
+Evaluation/evaluate_beam_gemini.py  ← Gemini-powered BEAM rubric evaluator
+
+Resources/
+    Resources/Hydradb_for_agents.md  ← Integration Guide for HydraDB
+    Resources/HydraDB_Graph_Architecture.md  ← Diagram comparison between Naive Rag and OmniMEM
 ```

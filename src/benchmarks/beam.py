@@ -182,7 +182,7 @@ def run_single(chat_dir: Path, size: str, database_name: str, ingested_collectio
                     answered += 1
 
                 if verbose:
-                    print_answer_panel(question_text, context, llm_response, confidence, abstained_flag)
+                    print_answer_panel(question_text, context, llm_response, confidence, abstained_flag, category=category)
 
                 entry = dict(q)          # copy question fields + rubric through
                 entry["llm_response"] = llm_response
