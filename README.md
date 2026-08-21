@@ -69,7 +69,7 @@ flowchart TD
 **The Problem:** Generic instructions like "Answer the question based on context" fail on specialized reasoning tests. For example, if a user said "I never used Flask-Login" in session 1, but "I am using Flask-Login" in session 15, a generic LLM simply picks one side as fact. Similarly, it routinely ignores user preferences explicitly stated in the context.
 
 **Our Solution:** We implemented **Category-Aware Prompting**.
-* Our `generate_answer()` function acts as a router, deploying one of **10 specialized system prompts** based on the BEAM question category.
+* Our `generate_answer()` function acts as a router, deploying one of **10 specialized system prompts** based on the question category.
 * **Contradiction Resolution:** The prompt explicitly forces the LLM to search for conflicting statements and output: *"I notice you've mentioned contradictory information..."*
 * **Knowledge Update:** The prompt explicitly forces the LLM to discard old values and only report the *most recent* data point.
 * **Preference Following:** The prompt forces the LLM to first identify the user's stated preference in the context *before* formulating an answer.

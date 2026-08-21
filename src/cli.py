@@ -82,11 +82,9 @@ def print_answer_panel(
         "⚠️  [yellow]LOW CONFIDENCE[/yellow]" if confidence < 0.5
         else "✅ [green]ANSWERED[/green]"
     )
-    snippet = context_snippet[:200].replace("\n", " ") + ("…" if len(context_snippet) > 200 else "")
     body = (
-        f"[bold]Q:[/bold] {question}\n\n"
-        f"[dim]Context snippet:[/dim] [italic]{snippet}[/italic]\n\n"
-        f"[bold]A:[/bold] {answer}\n\n"
+        f"[bold bright_yellow]❓ {question}[/bold bright_yellow]\n\n"
+        f"[bold white]💬 {answer}[/bold white]\n\n"
         f"[dim]Confidence: {confidence:.2f}  |  Status: {status}[/dim]"
     )
     console.print(Panel(body, border_style="cyan", expand=False))

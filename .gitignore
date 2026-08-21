@@ -1,6 +1,7 @@
 ﻿# Results and secrets
 results/
 .env
+BEAM/
 
 # Python
 __pycache__/

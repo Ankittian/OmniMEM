@@ -1,4 +1,4 @@
-﻿"""evaluate_beam_gemini.py — Score BEAM answers using Gemini as the LLM judge.
+"""evaluate_beam_gemini.py — Score BEAM answers using Gemini as the LLM judge.
 
 Reads:
   results/beam/<size>/<chat_id>/answers.json  (produced by run_beam.py)
@@ -140,16 +140,25 @@ def print_scores(all_results: dict[str, dict], size: str) -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--size", default="100K")
+    parser = argparse.ArgumentParser(
+        description="Evaluate BEAM answers.json files using Gemini as judge."
+    )
+    parser.add_argument("--size", default="100K",
+                        help="Chat corpus size (100K / 500K / 1M / 10M).")
     parser.add_argument("--start", type=int, default=0)
     parser.add_argument("--end", type=int, default=None)
+    parser.add_argument(
+        "--results-dir", default=None,
+        help="Override the results directory (default: results/beam/<size>). "
+             "Use e.g. results/beam-naive/100K to evaluate the Naive RAG baseline.",
+    )
     args = parser.parse_args()
 
-    console.print(Panel.fit(f"[bold magenta]BEAM Evaluation — {args.size} (Gemini judge)[/bold magenta]"))
+    results_dir = Path(args.results_dir) if args.results_dir else Path("results") / "beam" / args.size
+    label = str(results_dir)
+    console.print(Panel.fit(f"[bold magenta]BEAM Evaluation — {args.size} (Gemini judge)[/bold magenta]\n[dim]{label}[/dim]"))
 
     chats_dir = Path("BEAM") / "chats" / args.size
-    results_dir = Path("results") / "beam" / args.size
 
     chat_dirs = sorted(
         [d for d in chats_dir.iterdir() if d.is_dir() and d.name.isdigit()],
