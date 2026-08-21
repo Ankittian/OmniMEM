@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>🧠 HydraGraph Memory</h1>
+  <h1>🧠 OmniMEM</h1>
   <p><b>Track 03 — Memory and Context Retrieval</b></p>
   <p>A graph-native agent memory layer built on <a href="https://hydradb.com">HydraDB</a> that handles cross-session continuity across 30–40 sessions with accurate fact synthesis, temporal overwrite resolution, contradiction detection, and explicit abstention.</p>
 </div>
@@ -8,7 +8,7 @@
 
 ## 🎨 Architecture & Flow
 
-To solve the complex reasoning requirements of the BEAM and LongMemEval benchmarks, we moved away from a naïve single-query approach and designed a robust, category-aware pipeline.
+To solve the complex reasoning requirements of the BEAM benchmark, we moved away from a naïve single-query approach and designed a robust, category-aware pipeline.
 
 ```mermaid
 flowchart TD
@@ -81,7 +81,7 @@ We utilize an **Abstention Threshold** (`ABSTAIN_THRESHOLD = 0.10`). By analyzin
 
 ## ⚖️ Naive RAG Baseline Comparison
 
-To prove the value of HydraGraph Memory, we built a strict **Naive RAG Baseline** for side-by-side comparison. 
+To prove the value of OmniMEM, we built a strict **Naive RAG Baseline** for side-by-side comparison. 
 
 The baseline (`src/naive_rag.py`) represents a standard, basic RAG setup:
 *   **Storage & Retrieval:** In-memory TF-IDF and cosine similarity (no graph context, no temporal ordering).

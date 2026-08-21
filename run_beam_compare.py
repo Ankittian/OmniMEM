@@ -1,4 +1,4 @@
-"""run_beam_compare.py — Side-by-side BEAM comparison: HydraGraph Memory vs Naive RAG.
+"""run_beam_compare.py — Side-by-side BEAM comparison: OmniMEM vs Naive RAG.
 
 This script runs BOTH systems on the same subset of chats and prints a
 rich comparison table showing per-category scores and the overall winner.
@@ -112,7 +112,7 @@ def _score_answers(answers_path: Path, questions_path: Path) -> dict[str, float]
 # ---------------------------------------------------------------------------
 
 def _print_comparison(
-    hydra_scores: dict[str, list[float]],
+    omnimem_scores: dict[str, list[float]],
     naive_scores: dict[str, list[float]],
     size: str,
 ) -> None:
@@ -123,14 +123,14 @@ def _print_comparison(
 
     table = Table(
         title=f"[bold]BEAM Comparison — {size}[/bold]\n"
-              f"[cyan]HydraGraph Memory[/cyan] vs [yellow]Naive RAG[/yellow]",
+              f"[cyan]OmniMEM[/cyan] vs [yellow]Naive RAG[/yellow]",
         box=box.DOUBLE_EDGE,
         border_style="bright_white",
         show_lines=True,
         title_justify="center",
     )
     table.add_column("Category", style="bold white", no_wrap=True, min_width=26)
-    table.add_column("HydraGraph Memory", justify="center", style="cyan", min_width=18)
+    table.add_column("OmniMEM", justify="center", style="cyan", min_width=18)
     table.add_column("Naive RAG (TF-IDF)", justify="center", style="yellow", min_width=18)
     table.add_column("Delta", justify="center", min_width=10)
     table.add_column("Winner", justify="center", min_width=8)
@@ -139,7 +139,7 @@ def _print_comparison(
     naive_means: list[float] = []
 
     for cat in CATEGORIES:
-        h = mean(hydra_scores.get(cat, []))
+        h = mean(omnimem_scores.get(cat, []))
         n = mean(naive_scores.get(cat, []))
 
         h_str = f"{h*100:.1f}%" if h is not None else "—"
@@ -196,9 +196,9 @@ def _print_comparison(
     # Summary panel
     improvement = ((h_overall - n_overall) / n_overall * 100) if n_overall > 0 else 0
     console.print(Panel(
-        f"[bold cyan]HydraGraph Memory[/bold cyan]:  [bold]{h_overall*100:.1f}%[/bold] overall\n"
+        f"[bold cyan]OmniMEM[/bold cyan]:  [bold]{h_overall*100:.1f}%[/bold] overall\n"
         f"[bold yellow]Naive RAG (TF-IDF)[/bold yellow]: [bold]{n_overall*100:.1f}%[/bold] overall\n\n"
-        f"[bold green]HydraGraph Memory is {improvement:.1f}% better than Naive RAG[/bold green]\n\n"
+        f"[bold green]OmniMEM is {improvement:.1f}% better than Naive RAG[/bold green]\n\n"
         f"Key advantages demonstrated:\n"
         f"  • [cyan]Graph-enhanced retrieval[/cyan] vs flat TF-IDF chunks\n"
         f"  • [cyan]Multi-query recall[/cyan] vs single query lookup\n"
@@ -214,7 +214,7 @@ def _print_comparison(
 # ---------------------------------------------------------------------------
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Side-by-side BEAM comparison: HydraGraph vs Naive RAG")
+    parser = argparse.ArgumentParser(description="Side-by-side BEAM comparison: OmniMEM vs Naive RAG")
     parser.add_argument("--size", required=True, choices=SIZES)
     parser.add_argument("--start", type=int, default=0)
     parser.add_argument("--end", type=int, default=None)
@@ -229,7 +229,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--skip-hydra", action="store_true",
-        help="Skip running HydraGraph Memory (use existing results/beam/ files).",
+        help="Skip running OmniMEM (use existing results/beam/ files).",
     )
     args = parser.parse_args()
 
@@ -243,7 +243,7 @@ def main() -> None:
     # ── Step 1: Run inference ──────────────────────────────────────────────
     if not args.skip_run and not args.skip_hydra:
         console.print(Panel.fit(
-            "[bold cyan]Step 1/3: Running HydraGraph Memory inference…[/bold cyan]",
+            "[bold cyan]Step 1/3: Running OmniMEM inference…[/bold cyan]",
             border_style="cyan",
         ))
         run_hydra(size=size, start=args.start, end=args.end, verbose=args.verbose)
@@ -261,7 +261,7 @@ def main() -> None:
         border_style="magenta",
     ))
 
-    hydra_scores: dict[str, list[float]] = {c: [] for c in CATEGORIES}
+    omnimem_scores: dict[str, list[float]] = {c: [] for c in CATEGORIES}
     naive_scores: dict[str, list[float]] = {c: [] for c in CATEGORIES}
 
     for chat_dir in chat_dirs:
@@ -272,12 +272,12 @@ def main() -> None:
         naive_answers = Path("results") / "beam-naive" / size / chat_id / "answers.json"
 
         if hydra_answers.exists():
-            console.print(f"  [cyan]Scoring HydraGraph — chat {chat_id}[/cyan]")
+            console.print(f"  [cyan]Scoring OmniMEM — chat {chat_id}[/cyan]")
             h_scores = _score_answers(hydra_answers, questions_path)
             for cat, score in h_scores.items():
-                hydra_scores[cat].append(score)
+                omnimem_scores[cat].append(score)
         else:
-            console.print(f"  [red]No HydraGraph answers for chat {chat_id}[/red]")
+            console.print(f"  [red]No OmniMEM answers for chat {chat_id}[/red]")
 
         if naive_answers.exists():
             console.print(f"  [yellow]Scoring Naive RAG — chat {chat_id}[/yellow]")
@@ -288,13 +288,13 @@ def main() -> None:
             console.print(f"  [red]No Naive RAG answers for chat {chat_id}[/red]")
 
     # ── Step 3: Print comparison ───────────────────────────────────────────
-    _print_comparison(hydra_scores, naive_scores, size)
+    _print_comparison(omnimem_scores, naive_scores, size)
 
     # Save comparison JSON
     out = {
         "size": size,
         "chats": [d.name for d in chat_dirs],
-        "hydragraph_memory": {c: (sum(v)/len(v) if v else None) for c, v in hydra_scores.items()},
+        "omnimem": {c: (sum(v)/len(v) if v else None) for c, v in omnimem_scores.items()},
         "naive_rag": {c: (sum(v)/len(v) if v else None) for c, v in naive_scores.items()},
     }
     out_path = Path("results") / f"comparison-{size}.json"

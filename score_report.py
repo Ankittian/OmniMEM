@@ -78,7 +78,7 @@ def print_beam_table(scores):
 
 
 def main():
-    console.print(Panel.fit("[bold magenta]HydraGraph Memory — Benchmark Score Dashboard[/bold magenta]"))
+    console.print(Panel.fit("[bold magenta]OmniMEM — Benchmark Score Dashboard[/bold magenta]"))
     beam_scores = load_beam_scores()
     console.print()
     beam_overall = print_beam_table(beam_scores)

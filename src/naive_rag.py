@@ -8,7 +8,7 @@ This intentionally replicates what a *basic* RAG system would do:
   4. Feed them straight to Gemini with a single generic system prompt
      (NO category-aware prompting, NO multi-query recall, NO abstention logic).
 
-This is the "naive baseline" that HydraGraph Memory is compared against.
+This is the "naive baseline" that OmniMEM is compared against.
 """
 from __future__ import annotations
 

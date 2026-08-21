@@ -10,7 +10,7 @@ import argparse
 from src.benchmarks.beam import run, SIZES
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Run BEAM benchmark with HydraGraph memory.")
+    parser = argparse.ArgumentParser(description="Run BEAM benchmark with OmniMEM memory.")
     parser.add_argument("--size", required=True, choices=SIZES,
                         help="Chat corpus size to evaluate (100K / 500K / 1M / 10M).")
     parser.add_argument("--start", type=int, default=0,
