@@ -79,6 +79,28 @@ We utilize an **Abstention Threshold** (`ABSTAIN_THRESHOLD = 0.10`). By analyzin
 
 ---
 
+## ⚖️ Naive RAG Baseline Comparison
+
+To prove the value of HydraGraph Memory, we built a strict **Naive RAG Baseline** for side-by-side comparison. 
+
+The baseline (`src/naive_rag.py`) represents a standard, basic RAG setup:
+*   **Storage & Retrieval:** In-memory TF-IDF and cosine similarity (no graph context, no temporal ordering).
+*   **Querying:** Single-query lookup (no multi-query recall).
+*   **Prompting:** A single, generic system prompt for all questions (no category-aware routing).
+*   **Abstention:** Always attempts to answer (no confidence thresholding).
+
+You can run the side-by-side comparison on the BEAM benchmark using our comparison runner. It runs inference for both systems, evaluates them with the Gemini judge, and prints a rich comparison table showing the winner for every reasoning category.
+
+```bash
+# Run both systems side-by-side on chats 0-3
+python run_beam_compare.py --size 100K --start 0 --end 3
+
+# If you already ran inference, just run the evaluation and comparison
+python run_beam_compare.py --size 100K --skip-run
+```
+
+---
+
 ## 🚀 Setup & Execution
 
 ### Prerequisites
@@ -127,14 +149,20 @@ python LongMemEval/src/evaluation/evaluate_qa.py \
 
 ```text
 src/
-  config.py              ← API clients (HydraDB, Gemini); GEMINI_MODEL env var
-  memory.py              ← setup_tenant(), ingest_sessions(), recall(), should_abstain()
-  answerer.py            ← generate_answer() with 10 per-category system prompts
-  cli.py                 ← Rich terminal UI components (spinners, panels)
+  config.py                     ← API clients (HydraDB, Gemini); GEMINI_MODEL env var
+  memory.py                     ← HydraDB graph memory: setup_tenant(), ingest_sessions(), recall()
+  answerer.py                   ← generate_answer() with 10 per-category system prompts
+  naive_rag.py                  ← Baseline TF-IDF RAG (no graph, no category routing)
+  cli.py                        ← Rich terminal UI components (spinners, panels)
   benchmarks/
-    beam.py              ← BEAM adapter (handles category-aware routing)
+    beam.py                     ← BEAM adapter for HydraGraph Memory
+    beam_naive_rag.py           ← BEAM adapter for Naive RAG Baseline
 
-run_beam.py              ← BEAM CLI entry point
-evaluate_beam_gemini.py  ← Gemini-powered BEAM rubric evaluator
-score_report.py          ← Quantitative Benchmarking Dashboard
+run_beam.py                     ← HydraGraph BEAM inference CLI
+run_beam_naive_rag.py           ← Naive RAG BEAM inference CLI
+run_beam_compare.py             ← Side-by-side comparison runner (HydraGraph vs Naive)
+evaluate_beam_gemini.py         ← Gemini-powered BEAM rubric evaluator
+score_report.py                 ← Quantitative Benchmarking Dashboard
+HydraDB_Graph_Architecture.md   ← Visual explanation of HydraDB vs flat Vector Search
+demo_script.md                  ← Script & commands for the demo video
 ```
