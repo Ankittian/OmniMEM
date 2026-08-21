@@ -83,8 +83,8 @@ def print_answer_panel(
         else "✅ [green]ANSWERED[/green]"
     )
     body = (
-        f"[bold bright_yellow]❓ {question}[/bold bright_yellow]\n\n"
-        f"[bold white]💬 {answer}[/bold white]\n\n"
+        f"[bold bright_yellow]Q: {question}[/bold bright_yellow]\n\n"
+        f"[bold white]A: {answer}[/bold white]\n\n"
         f"[dim]Confidence: {confidence:.2f}  |  Status: {status}[/dim]"
     )
     console.print(Panel(body, border_style="cyan", expand=False))
