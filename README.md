@@ -62,7 +62,7 @@ flowchart TD
 **The Problem:** In a naïve RAG setup, a single semantic query (e.g., "What order did I implement these features?") often fails to fetch chunks across widely separated sessions (e.g., chat 4, 60, and 116). The vector search zeroes in on the single most semantically similar chunk and ignores the rest.
 
 **Our Solution:** We implemented **Multi-Query Recall**. 
-* When a question belongs to a complex multi-session category (like *event_ordering*, *summarization*, or *temporal_reasoning*), the system automatically fires the user's primary query **plus** several broad fallback queries (e.g., "project timeline milestones dates", "security features authentication implementation").
+* When a question belongs to a complex multi-session category (like *event_ordering*, *summarization*, or *temporal_reasoning*), the system automatically fires the user's primary query **plus** several broad fallback queries derived FRom retrieved evidence, after a first-pass recall, "Given the question and these excerpts, what additional queries would recover the missing facts?" — this turns it into self-refining iterative retrieval (RAG-fusion style) that works on any dataset.
 * It retrieves chunks for *all* these sub-queries simultaneously, deduplicates them, and merges them into a massive, highly-contextualized payload for the LLM.
 
 ### 2. The Generate Answer Stage: Category-Aware Prompting
@@ -70,9 +70,9 @@ flowchart TD
 
 **Our Solution:** We implemented **Category-Aware Prompting**.
 * Our `generate_answer()` function acts as a router, deploying one of **10 specialized system prompts** based on the question category.
-* **Contradiction Resolution:** The prompt explicitly forces the LLM to search for conflicting statements and output: *"I notice you've mentioned contradictory information..."*
-* **Knowledge Update:** The prompt explicitly forces the LLM to discard old values and only report the *most recent* data point.
-* **Preference Following:** The prompt forces the LLM to first identify the user's stated preference in the context *before* formulating an answer.
+* **Contradiction Resolution:** The prompts explicitly forces the LLM to search for conflicting statements and output: *"I notice you've mentioned contradictory information..."*
+* **Knowledge Update:** The prompts explicitly forces the LLM to discard old values and only report the *most recent* data point.
+* **Preference Following:** The prompts forces the LLM to first identify the user's stated preference in the context *before* formulating an answer.
 
 ### 3. Explicit Abstention
 We utilize an **Abstention Threshold** (`ABSTAIN_THRESHOLD = 0.10`). By analyzing HydraDB's returned relevance scores, the system confidently says *"I don't have that information in our conversation history"* if the context quality is poor, entirely eliminating hallucinations on unanswerable questions.
